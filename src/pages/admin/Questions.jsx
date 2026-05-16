@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import axios from 'axios';
 import { 
   Plus, 
   Search, 
@@ -16,7 +17,6 @@ import {
   BookOpen,
   Star
 } from 'lucide-react';
-import { getQuestions, createQuestion, updateQuestion, deleteQuestion, getSubjects, getDifficulties } from '../../services/adminService';
 import FormModal from '../../components/admin/FormModal';
 import FormInput from '../../components/admin/FormInput';
 import FormTextarea from '../../components/admin/FormTextarea';
@@ -24,15 +24,27 @@ import FormSelect from '../../components/admin/FormSelect';
 import FormTags from '../../components/admin/FormTags';
 import RichTextEditor from '../../components/admin/RichTextEditor';
 
+const api = axios.create({ baseURL: import.meta.env.VITE_API_URL });
+api.interceptors.request.use(c => {
+  const t = localStorage.getItem("accessToken");
+  if (t) c.headers.Authorization = `Bearer ${t}`;
+  return c;
+});
+
 const questionSchema = z.object({
   questionText: z.string().min(1, 'Question text is required'),
   explanation: z.string().optional(),
-  subject: z.string().min(1, 'Subject is required'),
   difficulty: z.enum(['easy', 'medium', 'hard']),
-  type: z.enum(['multiple-choice', 'true-false', 'short-answer']),
-  options: z.array(z.string()).optional(),
-  correctAnswer: z.string().min(1, 'Correct answer is required'),
-  points: z.number().min(1, 'Points must be at least 1'),
+  examType: z.enum(['SAT Math', 'SAT EBRW', 'IELTS']),
+  topic: z.string().min(1, 'Topic is required'),
+  subtopic: z.string().optional(),
+  choices: z.object({
+    A: z.string().min(1, 'Choice A is required'),
+    B: z.string().min(1, 'Choice B is required'),
+    C: z.string().min(1, 'Choice C is required'),
+    D: z.string().min(1, 'Choice D is required'),
+  }),
+  correctAnswer: z.enum(['A', 'B', 'C', 'D']),
   tags: z.array(z.string()).optional(),
 });
 
@@ -42,40 +54,48 @@ const difficultyOptions = [
   { value: 'hard', label: 'Hard' },
 ];
 
-const typeOptions = [
-  { value: 'multiple-choice', label: 'Multiple Choice' },
-  { value: 'true-false', label: 'True/False' },
-  { value: 'short-answer', label: 'Short Answer' },
+const examTypeOptions = [
+  { value: 'SAT Math', label: 'SAT Math' },
+  { value: 'SAT EBRW', label: 'SAT EBRW' },
+  { value: 'IELTS', label: 'IELTS' },
 ];
 
 const QuestionsManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedSubject, setSelectedSubject] = useState('');
   const [selectedDifficulty, setSelectedDifficulty] = useState('');
-  const [selectedType, setSelectedType] = useState('');
+  const [selectedExamType, setSelectedExamType] = useState('');
+  const [selectedTopic, setSelectedTopic] = useState('');
+  const [selectedSubtopic, setSelectedSubtopic] = useState('');
+  const [selectedTags, setSelectedTags] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
 
   const queryClient = useQueryClient();
 
+  const fetchQuestions = async () => {
+    const params = new URLSearchParams();
+    if (searchTerm) params.append('search', searchTerm);
+    if (selectedDifficulty) params.append('difficulty', selectedDifficulty);
+    if (selectedExamType) params.append('examType', selectedExamType);
+    if (selectedTopic) params.append('topic', selectedTopic);
+    if (selectedSubtopic) params.append('subtopic', selectedSubtopic);
+    if (selectedTags) params.append('tags', selectedTags);
+    
+    const response = await api.get(`/admin/questions?${params.toString()}`);
+    return response.data.data || [];
+  };
+
   const { data: questions = [], isLoading } = useQuery({
-    queryKey: ['admin-questions', { search: searchTerm, subject: selectedSubject, difficulty: selectedDifficulty, type: selectedType }],
-    queryFn: () => getQuestions({ search: searchTerm, subject: selectedSubject, difficulty: selectedDifficulty, type: selectedType }),
-  });
-
-  const { data: subjects = [] } = useQuery({
-    queryKey: ['subjects'],
-    queryFn: getSubjects,
-  });
-
-  const { data: difficulties = [] } = useQuery({
-    queryKey: ['difficulties'],
-    queryFn: getDifficulties,
+    queryKey: ['admin-questions', { search: searchTerm, difficulty: selectedDifficulty, examType: selectedExamType, topic: selectedTopic, subtopic: selectedSubtopic, tags: selectedTags }],
+    queryFn: fetchQuestions,
   });
 
   const createMutation = useMutation({
-    mutationFn: createQuestion,
+    mutationFn: async (data) => {
+      const response = await api.post('/admin/questions', data);
+      return response.data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-questions'] });
       setIsModalOpen(false);
@@ -84,7 +104,10 @@ const QuestionsManagement = () => {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => updateQuestion(id, data),
+    mutationFn: async ({ id, data }) => {
+      const response = await api.put(`/admin/questions/${id}`, data);
+      return response.data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-questions'] });
       setIsModalOpen(false);
@@ -94,7 +117,9 @@ const QuestionsManagement = () => {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: deleteQuestion,
+    mutationFn: async (id) => {
+      await api.delete(`/admin/questions/${id}`);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-questions'] });
     },
@@ -108,9 +133,15 @@ const QuestionsManagement = () => {
 
   const onSubmit = (data) => {
     const processedData = {
-      ...data,
-      points: parseInt(data.points),
-      options: data.type === 'multiple-choice' ? data.options : undefined,
+      questionText: data.questionText,
+      explanation: data.explanation,
+      difficulty: data.difficulty,
+      examType: data.examType,
+      topic: data.topic,
+      subtopic: data.subtopic,
+      choices: data.choices,
+      correctAnswer: data.correctAnswer,
+      tags: data.tags || [],
     };
 
     if (editingQuestion) {
@@ -125,12 +156,12 @@ const QuestionsManagement = () => {
     reset({
       questionText: question.questionText,
       explanation: question.explanation || '',
-      subject: question.subject,
       difficulty: question.difficulty,
-      type: question.type,
-      options: question.options || ['', '', '', ''],
+      examType: question.examType,
+      topic: question.topic,
+      subtopic: question.subtopic || '',
+      choices: question.choices || { A: '', B: '', C: '', D: '' },
       correctAnswer: question.correctAnswer,
-      points: question.points,
       tags: question.tags || [],
     });
     setIsModalOpen(true);
@@ -147,27 +178,26 @@ const QuestionsManagement = () => {
     reset({
       questionText: '',
       explanation: '',
-      subject: '',
       difficulty: 'medium',
-      type: 'multiple-choice',
-      options: ['', '', '', ''],
-      correctAnswer: '',
-      points: 1,
+      examType: 'SAT Math',
+      topic: '',
+      subtopic: '',
+      choices: { A: '', B: '', C: '', D: '' },
+      correctAnswer: 'A',
       tags: [],
     });
     setIsModalOpen(true);
   };
 
-  const subjectOptions = subjects.map(subject => ({ value: subject._id, label: subject.name }));
-  const difficultyOptionsFromApi = difficulties.map(diff => ({ value: diff.value, label: diff.label }));
-
   const filteredQuestions = questions.filter(question => {
     const matchesSearch = question.questionText.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          (question.tags && question.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase())));
-    const matchesSubject = !selectedSubject || question.subject === selectedSubject;
     const matchesDifficulty = !selectedDifficulty || question.difficulty === selectedDifficulty;
-    const matchesType = !selectedType || question.type === selectedType;
-    return matchesSearch && matchesSubject && matchesDifficulty && matchesType;
+    const matchesExamType = !selectedExamType || question.examType === selectedExamType;
+    const matchesTopic = !selectedTopic || question.topic.toLowerCase().includes(selectedTopic.toLowerCase());
+    const matchesSubtopic = !selectedSubtopic || (question.subtopic && question.subtopic.toLowerCase().includes(selectedSubtopic.toLowerCase()));
+    const matchesTags = !selectedTags || (question.tags && question.tags.some(tag => tag.toLowerCase().includes(selectedTags.toLowerCase())));
+    return matchesSearch && matchesDifficulty && matchesExamType && matchesTopic && matchesSubtopic && matchesTags;
   });
 
   if (isLoading) {
@@ -228,39 +258,52 @@ const QuestionsManagement = () => {
         </div>
 
         {showFilters && (
-          <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-            <select
-              value={selectedSubject}
-              onChange={(e) => setSelectedSubject(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">All Subjects</option>
-              {subjectOptions.map(option => (
-                <option key={option.value} value={option.value}>{option.label}</option>
-              ))}
-            </select>
-            
+          <div className="mt-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
             <select
               value={selectedDifficulty}
               onChange={(e) => setSelectedDifficulty(e.target.value)}
               className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">All Difficulties</option>
-              {(difficultyOptionsFromApi.length > 0 ? difficultyOptionsFromApi : difficultyOptions).map(option => (
+              {difficultyOptions.map(option => (
                 <option key={option.value} value={option.value}>{option.label}</option>
               ))}
             </select>
             
             <select
-              value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value)}
+              value={selectedExamType}
+              onChange={(e) => setSelectedExamType(e.target.value)}
               className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">All Types</option>
-              {typeOptions.map(option => (
+              <option value="">All Exam Types</option>
+              {examTypeOptions.map(option => (
                 <option key={option.value} value={option.value}>{option.label}</option>
               ))}
             </select>
+            
+            <input
+              type="text"
+              placeholder="Filter by topic..."
+              value={selectedTopic}
+              onChange={(e) => setSelectedTopic(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            
+            <input
+              type="text"
+              placeholder="Filter by subtopic..."
+              value={selectedSubtopic}
+              onChange={(e) => setSelectedSubtopic(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            
+            <input
+              type="text"
+              placeholder="Filter by tags..."
+              value={selectedTags}
+              onChange={(e) => setSelectedTags(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
         )}
       </div>
@@ -286,20 +329,21 @@ const QuestionsManagement = () => {
                     }`}>
                       {question.difficulty}
                     </span>
-                    <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
-                      {question.type}
+                    <span className="px-2 py-1 text-xs font-medium rounded-full bg-purple-100 text-purple-800">
+                      {question.examType}
                     </span>
-                    <div className="flex items-center gap-1 text-sm text-gray-500">
-                      <Star size={14} />
-                      <span>{question.points} pts</span>
-                    </div>
                   </div>
                   
                   <div className="flex items-center gap-6 text-sm text-gray-500 mb-3">
                     <div className="flex items-center gap-1">
                       <BookOpen size={16} />
-                      <span>{question.subject}</span>
+                      <span>{question.topic}</span>
                     </div>
+                    {question.subtopic && (
+                      <div className="flex items-center gap-1">
+                        <span>Subtopic: {question.subtopic}</span>
+                      </div>
+                    )}
                     {question.tags && question.tags.length > 0 && (
                       <div className="flex items-center gap-1">
                         <Tag size={16} />
@@ -361,57 +405,60 @@ const QuestionsManagement = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <FormSelect
-              name="subject"
-              label="Subject"
-              options={subjectOptions}
-              required
-            />
-            
-            <FormSelect
               name="difficulty"
               label="Difficulty"
-              options={difficultyOptionsFromApi.length > 0 ? difficultyOptionsFromApi : difficultyOptions}
+              options={difficultyOptions}
               required
             />
             
             <FormSelect
-              name="type"
-              label="Question Type"
-              options={typeOptions}
+              name="examType"
+              label="Exam Type"
+              options={examTypeOptions}
+              required
+            />
+            
+            <FormInput
+              name="topic"
+              label="Topic"
               required
             />
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormInput
-              name="points"
-              label="Points"
-              type="number"
-              required
+              name="subtopic"
+              label="Subtopic"
             />
             
-            <FormInput
+            <FormSelect
               name="correctAnswer"
               label="Correct Answer"
+              options={[
+                { value: 'A', label: 'A' },
+                { value: 'B', label: 'B' },
+                { value: 'C', label: 'C' },
+                { value: 'D', label: 'D' },
+              ]}
               required
             />
           </div>
           
-          {questionType === 'multiple-choice' && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Options</label>
-              <div className="space-y-2">
-                {[0, 1, 2, 3].map((index) => (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Answer Choices</label>
+            <div className="space-y-2">
+              {['A', 'B', 'C', 'D'].map((choice) => (
+                <div key={choice} className="flex items-center gap-2">
+                  <span className="font-semibold text-gray-600 w-8">{choice}:</span>
                   <input
-                    key={index}
-                    {...register(`options.${index}`)}
-                    placeholder={`Option ${index + 1}`}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    {...register(`choices.${choice}`)}
+                    placeholder={`Choice ${choice}`}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
-          )}
+          </div>
           
           <RichTextEditor
             name="explanation"
