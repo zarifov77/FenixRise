@@ -4,7 +4,6 @@ import Hero from "../components/sections/Hero";
 import Stats from "../components/sections/Stats";
 import Features from "../components/sections/Features";
 import HowItWorks from "../components/sections/HowItWorks";
-import Courses from "../components/sections/Courses";
 import Universities from "../components/sections/Universities";
 import Testimonials from "../components/sections/Testimonials";
 import Pricing from "../components/sections/Pricing";
