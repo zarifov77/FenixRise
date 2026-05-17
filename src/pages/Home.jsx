@@ -30,7 +30,6 @@ export default function Home() {
       <Stats />
       <Features />
       <HowItWorks />
-      <Courses />
       <Universities />
       <Testimonials />
       <Pricing />
