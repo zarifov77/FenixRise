@@ -9,6 +9,7 @@ import Login           from "./pages/auth/Login";
 import Register        from "./pages/auth/Register";
 import AboutUs         from "./pages/public/AboutUs";
 import TermsPage       from "./pages/public/TermsPage";
+import Pricing         from "./pages/Pricing";
 
 import Dashboard       from "./pages/dashboard/Dashboard";
 import Roadmap         from "./pages/dashboard/Roadmap";
@@ -74,6 +75,7 @@ export default function App() {
         {/* Public — always accessible, landing page is default */}
         <Route path="/"        element={<PublicLayout><Home /></PublicLayout>} />
         <Route path="/about"   element={<AboutUs />} />
+        <Route path="/pricing" element={<PublicLayout><Pricing /></PublicLayout>} />
         <Route path="/terms"   element={<TermsPage />} />
         <Route path="/privacy" element={<TermsPage />} />
 

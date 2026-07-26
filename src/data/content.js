@@ -3,7 +3,7 @@ export const NAV_LINKS = [
   { label: "How It Works", href: "#how-it-works" },
   { label: "Universities", href: "#universities" },
   { label: "Success Stories", href: "#testimonials" },
-  // Pricing removed from landing page
+  { label: "Pricing", href: "/pricing" },
 ];
 
 export const STATS = [

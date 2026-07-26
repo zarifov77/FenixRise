@@ -5,7 +5,7 @@ import {
   Flame, GraduationCap, Share2, Copy, Check, Heart,
   ArrowRight, Plus,
 } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import useAuthStore from "../../stores/useAuthStore";
 import { userAPI, attemptAPI } from "../../lib/api";
 import DashboardLayout from "../../components/dashboard/DashboardLayout";
@@ -66,6 +66,12 @@ export default function Profile() {
   const [uniInput, setUniInput] = useState("");
   const [favUnis, setFavUnis] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const purchaseRequest = useMemo(() => {
+    // Support navigate state when redirected from Pricing
+    return location.state?.plan ? location.state : null;
+  }, [location.state]);
 
   // Load favorites from localStorage
   useEffect(() => {
@@ -279,6 +285,30 @@ export default function Profile() {
       </MDiv>
 
       {/* ── TABS ── */}
+      {/* Complete Your Purchase (appears when redirected from Pricing) */}
+      {purchaseRequest && (
+        <div className="profile-glass p-6 mb-6">
+          <h2 className="font-display text-[18px] font-bold mb-3" style={{ color: "var(--text-primary)" }}>Complete Your Purchase</h2>
+          <p className="text-[14px] mb-4" style={{ color: "var(--text-secondary)" }}>
+            You're about to purchase the <strong>{purchaseRequest.name}</strong> plan for <strong>{purchaseRequest.price} UZS</strong>.
+          </p>
+          <div className="flex flex-col md:flex-row gap-4 items-start">
+            <div className="flex-1 text-[14px]" style={{ color: "var(--text-secondary)" }}>
+              <p className="mb-2">We'll contact you to discuss payment options and next steps. Use the button on the right to email our team, or reply to the confirmation we'll send.</p>
+              <p className="mb-2">If you have questions, mention your preferred payment method and best contact time.</p>
+            </div>
+            <div className="w-full md:w-64">
+              <a href={`mailto:hello@fenixrise.uz?subject=Purchase%20Request%20-%20${encodeURIComponent(purchaseRequest.name)}&body=I%20would%20like%20to%20purchase%20the%20${encodeURIComponent(purchaseRequest.name)}%20plan.`}
+                 className="btn-primary w-full py-3 text-center inline-block">
+                Contact for Payment
+              </a>
+              <button onClick={() => navigate('/pricing')} className="btn-ghost w-full mt-3 py-2">
+                Back to Pricing
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <MStagger className="flex gap-2 flex-wrap mb-6">
         {TABS.map(t => (
           <MItem key={t.id}>
