@@ -12,14 +12,10 @@ const LINKS = {
   ],
   Company: [
     { label: "About Us",  href: "/about" },
-    { label: "Blog",      href: "/blog" },
-    { label: "Careers",   href: "/careers" },
   ],
   Support: [
-    { label: "Help Center",      href: "/help" },
     { label: "Privacy Policy",   href: "/privacy" },
     { label: "Terms of Service", href: "/terms" },
-    { label: "Contact Us",       href: "/contact" },
   ],
 };
 
@@ -73,7 +69,7 @@ export default function Footer() {
           ))}
         </div>
 
-        {/* Newsletter */}
+        {/* Newsletter (simple contact link instead of non-functional form) */}
         <div className="py-8 flex flex-col md:flex-row gap-5 items-center justify-between"
              style={{ borderBottom: "1px solid var(--border)" }}>
           <div>
@@ -81,15 +77,10 @@ export default function Footer() {
               Stay in the loop
             </p>
             <p className="text-[13px]" style={{ color: "var(--text-secondary)" }}>
-              Admission tips and SAT strategies — weekly.
+              For updates and admissions tips, email us at
+              <a href="mailto:hello@fenixrise.uz" style={{ color: "var(--pumpkin)", marginLeft: 6 }}>hello@fenixrise.uz</a>
             </p>
           </div>
-          <form onSubmit={e => e.preventDefault()} className="flex gap-2 w-full md:w-auto">
-            <input type="email" placeholder="your@email.com" className="form-input !rounded-full md:w-56" />
-            <button type="submit" className="btn-primary !py-2.5 !px-5 !text-[13px]">
-              <Send size={13} /> Subscribe
-            </button>
-          </form>
         </div>
 
         <div className="pt-7 flex flex-col md:flex-row justify-between items-center gap-3 text-[12px]"

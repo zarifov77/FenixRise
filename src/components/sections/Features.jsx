@@ -26,9 +26,9 @@ export default function Features() {
               <MItem key={f.title}>
                 <div className="card p-7 group cursor-default h-full">
                   <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-5 bg-gradient-to-br ${f.color} transition-transform duration-300 group-hover:scale-110`}>
-                    <Icon size={21} color="#fff" strokeWidth={2.2} />
+                    <Icon size={21} color="#fff" strokeWidth={2.2} aria-hidden />
                   </div>
-                  <h3 className="font-display text-[18px] font-bold mb-2.5 group-hover:text-[--pumpkin] transition-colors"
+                  <h3 className="font-display text-[18px] font-bold mb-2.5 transition-colors"
                       style={{ fontWeight:700, color:"var(--text-primary)" }}>
                     {f.title}
                   </h3>

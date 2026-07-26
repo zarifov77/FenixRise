@@ -1,8 +1,8 @@
 import { ArrowRight, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import logo from "../../assets/logo.png";
-import { motion } from "framer-motion";
-import { MOrb } from "../MotionComponents";
+/* eslint-disable-next-line no-unused-vars */
+import { motion, MOrb } from "../MotionComponents";
 
 const spring = { type: "spring", stiffness: 300, damping: 24 };
 
@@ -35,11 +35,10 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             transition={{ delay: 0.2, duration: 0.7, ...spring }}
             className="font-display leading-[1.03] mb-7"
-            style={{ fontSize:"clamp(44px,7vw,80px)", fontWeight:800, color:"var(--text-primary)" }}>
-            Your Dream<br />
-            University<br />
-            <span className="gradient-text">Isn't a Dream.</span><br />
-            It's a <span className="gradient-text">Roadmap.</span>
+            style={{ fontSize:"clamp(36px,6vw,64px)", fontWeight:800, color:"var(--text-primary)" }}>
+            Get admitted to your dream university —
+            <br />
+            AI-driven roadmap, test prep, and mentors.
           </motion.h1>
 
           <motion.p
@@ -57,8 +56,8 @@ export default function Hero() {
             transition={{ delay: 0.55, duration: 0.5, ...spring }}
             className="flex flex-wrap gap-3 mb-12">
             <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-              <Link to="/register" className="btn-primary text-[15px] py-4 px-8">
-                Start Your Journey <ArrowRight size={17} />
+              <Link to="/register" aria-label="Create account" className="btn-primary text-[15px] py-4 px-8">
+                Get Started <ArrowRight size={17} />
               </Link>
             </motion.div>
             <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
