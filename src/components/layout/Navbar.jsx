@@ -4,7 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { NAV_LINKS } from "../../data/content";
 import useAuthStore from "../../stores/useAuthStore";
 import ThemeToggle from "../ui/ThemeToggle";
-import logo from "../../assets/logo.svg";
+import logo from "../../assets/logo.png";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);

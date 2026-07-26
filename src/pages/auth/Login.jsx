@@ -4,7 +4,7 @@ import { Eye, EyeOff, Flame, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import useAuthStore from "../../stores/useAuthStore";
 import TermsModal from "../../components/ui/TermsModal";
-import logo from "../../assets/logo.svg";
+import logo from "../../assets/logo.png";
 
 export default function Login() {
   const navigate = useNavigate();
