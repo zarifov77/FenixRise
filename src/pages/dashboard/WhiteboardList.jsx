@@ -38,7 +38,7 @@ function PaywallModal({ onClose }) {
             </div>
           ))}
         </div>
-        <Link to="/#pricing" onClick={onClose} style={{ display: "block", textAlign: "center", textDecoration: "none", background: "var(--pumpkin-soft)", color: "var(--text-primary)", border: "1px solid var(--glass-border)", borderRadius: 12, padding: "10px 14px", fontWeight: 700, marginBottom: 8 }}>
+            <Link to="/#features" onClick={onClose} style={{ display: "block", textAlign: "center", textDecoration: "none", background: "var(--pumpkin-soft)", color: "var(--text-primary)", border: "1px solid var(--glass-border)", borderRadius: 12, padding: "10px 14px", fontWeight: 700, marginBottom: 8 }}>
           Upgrade plan
         </Link>
         <button onClick={onClose} style={{ width: "100%", background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer" }}>

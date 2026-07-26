@@ -324,7 +324,7 @@ export default function Advisor() {
               {usage.count} / {limit === 999 ? "∞" : limit} used today
             </p>
             {plan === "free" && (
-              <Link to="/#pricing" style={{ display: "block", marginTop: 10, textDecoration: "none", textAlign: "center", color: "var(--text-primary)", background: "var(--pumpkin-soft)", border: "1px solid var(--glass-border)", borderRadius: 10, padding: "8px 10px", fontSize: 12, fontWeight: 700 }}>
+              <Link to="/#features" style={{ display: "block", marginTop: 10, textDecoration: "none", textAlign: "center", color: "var(--text-primary)", background: "var(--pumpkin-soft)", border: "1px solid var(--glass-border)", borderRadius: 10, padding: "8px 10px", fontSize: 12, fontWeight: 700 }}>
                 Upgrade plan
               </Link>
             )}

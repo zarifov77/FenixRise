@@ -6,7 +6,6 @@ import Features from "../components/sections/Features";
 import HowItWorks from "../components/sections/HowItWorks";
 import Universities from "../components/sections/Universities";
 import Testimonials from "../components/sections/Testimonials";
-import Pricing from "../components/sections/Pricing";
 import CTA from "../components/sections/CTA";
 
 export default function Home() {
@@ -32,7 +31,6 @@ export default function Home() {
       <HowItWorks />
       <Universities />
       <Testimonials />
-      <Pricing />
       <CTA />
     </>
   );

@@ -3,7 +3,7 @@ export const NAV_LINKS = [
   { label: "How It Works", href: "#how-it-works" },
   { label: "Universities", href: "#universities" },
   { label: "Success Stories", href: "#testimonials" },
-  { label: "Pricing", href: "#pricing" },
+  // Pricing removed from landing page
 ];
 
 export const STATS = [
@@ -151,53 +151,4 @@ export const UNIVERSITIES = [
   "Edinburgh", "Warwick", "King's College", "Politecnico Milano",
 ];
 
-export const PRICING = [
-  {
-    name: "Starter",
-    price: "Free",
-    period: "",
-    description: "Begin your journey with core tools",
-    features: [
-      "AI Profile Assessment",
-      "1 University Matching Report",
-      "3 SAT Practice Tests",
-      "Community Access",
-    ],
-    cta: "Get Started Free",
-    highlight: false,
-  },
-  {
-    name: "Rise",
-    price: "299,000",
-    period: "/ month",
-    description: "Everything you need to get admitted",
-    features: [
-      "Full AI Roadmap",
-      "Unlimited Practice Tests",
-      "SAT or IELTS Full Course",
-      "Essay Review (3 rounds)",
-      "University Matching (unlimited)",
-      "Monthly 1-on-1 Mentor Session",
-      "Scholarship Finder",
-    ],
-    cta: "Start Rising",
-    highlight: true,
-  },
-  {
-    name: "Phoenix",
-    price: "599,000",
-    period: "/ month",
-    description: "Concierge-level admission support",
-    features: [
-      "Everything in Rise",
-      "Dedicated Personal Mentor",
-      "Unlimited Essay Reviews",
-      "Interview Coaching",
-      "Application Submission Support",
-      "Visa & Pre-departure Guide",
-      "Priority Support 24/7",
-    ],
-    cta: "Go Phoenix",
-    highlight: false,
-  },
-];
+// Pricing data removed — landing page no longer includes pricing
