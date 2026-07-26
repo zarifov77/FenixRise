@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="FenixRise logo">
+  <defs>
+    <linearGradient id="glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FE7F2D" />
+      <stop offset="100%" stop-color="#FFAD60" />
+    </linearGradient>
+  </defs>
+  <rect width="120" height="120" rx="28" fill="#18191A" />
+  <path d="M60 20 C50 40 45 55 40 70 C45 60 50 50 60 50 C70 50 75 60 80 70 C75 55 70 40 60 20 Z" fill="url(#glow)" opacity="0.95" />
+  <path d="M52 76 C56 90 64 90 68 76 C74 66 80 58 84 48 C76 62 68 70 60 74 C52 70 44 62 36 48 C40 58 46 66 52 76 Z" fill="#FE7F2D" />
+  <circle cx="60" cy="42" r="6" fill="#fff" opacity="0.9" />
+  <circle cx="54" cy="48" r="3" fill="#fff" opacity="0.8" />
+</svg>

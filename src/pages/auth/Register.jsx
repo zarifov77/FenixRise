@@ -4,7 +4,7 @@ import { Eye, EyeOff, Flame, ArrowRight, Check } from "lucide-react";
 import { motion } from "framer-motion";
 import useAuthStore from "../../stores/useAuthStore";
 import TermsModal from "../../components/ui/TermsModal";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/logo.svg";
 
 const EXAM_OPTIONS = ["SAT", "IELTS", "TOEFL", "Both", "Other"];
 

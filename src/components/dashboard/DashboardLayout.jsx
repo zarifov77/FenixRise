@@ -8,7 +8,7 @@ import {
 import useAuthStore from "../../stores/useAuthStore";
 import ThemeToggle from "../ui/ThemeToggle";
 import BugReport from "../ui/BugReport";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/logo.svg";
 
 const NAV_SECTIONS = [
   {

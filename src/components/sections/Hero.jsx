@@ -1,6 +1,6 @@
 import { ArrowRight, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/logo.svg";
 /* eslint-disable-next-line no-unused-vars */
 import { motion } from "../MotionComponents";
 

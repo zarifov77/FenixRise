@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Flame, ArrowRight } from "lucide-react";
 import Navbar from "../../components/layout/Navbar";
 import Footer from "../../components/layout/Footer";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/logo.svg";
 
 const VALUES = [
   {

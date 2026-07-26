@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Target, Flame, Users, Globe, ArrowRight, CheckCircle2 } from "lucide-react";
-import logo from "../assets/logo.png";
+import logo from "../assets/logo.svg";
 
 const VALUES = [
   {
