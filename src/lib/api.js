@@ -19,6 +19,8 @@ let isRefreshing = false;
 let failedQueue = [];
 
 const redirectToLogin = () => {
+  const currentPath = window.location.pathname;
+  if (currentPath === "/login" || currentPath === "/register") return;
   window.history.pushState({}, "", "/login");
   window.dispatchEvent(new PopStateEvent("popstate"));
 };
@@ -34,6 +36,12 @@ api.interceptors.response.use(
     const original = error.config;
 
     if (error.response?.status === 401 && !original._retry) {
+      if (original.url?.includes("/auth/me") || original.url?.includes("/auth/login") || original.url?.includes("/auth/register")) {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        return Promise.reject(error);
+      }
+
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });

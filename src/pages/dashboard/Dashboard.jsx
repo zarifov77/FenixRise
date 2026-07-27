@@ -51,10 +51,10 @@ export default function Dashboard() {
     : null;
 
   const STATS = [
-    { label:"Tests Taken",  value: stats.totalTests        ?? 0,   icon: FileText,   color:"#3b82f6" },
-    { label:"Avg Score",    value: `${stats.avgScore       ?? 0}%`,icon: TrendingUp, color:"#22c55e" },
-    { label:"SAT Score",    value: stats.currentSatScore   ?? "–", icon: Target,     color:"var(--pumpkin)" },
-    { label:"IELTS Band",   value: stats.currentIeltsScore ?? "–", icon: Flame,      color:"#f97316" },
+    { label:"Saved universities", value: savedCount || "—", icon: Map, color:"var(--pumpkin)" },
+    { label:"Next deadline", value: roadmap?.nextDeadline ? "1 item" : "No date", icon: Target, color:"#3b82f6" },
+    { label:"Recent tests", value: recentAttempts.length || "—", icon: FileText, color:"#22c55e" },
+    { label:"Enrolled courses", value: enrolled.length || "—", icon: BookOpen, color:"#f97316" },
   ];
 
   return (
@@ -351,37 +351,28 @@ export default function Dashboard() {
             <div className="flex items-center justify-between mb-5">
               <div>
                 <p className="text-[11px] uppercase tracking-[0.24em] mb-2" style={{ color:"var(--text-muted)" }}>
-                  Productivity
+                  Focus
                 </p>
                 <h3 className="font-display text-[18px] font-bold" style={{ color:"var(--text-primary)" }}>
-                  Monthly progress
+                  Your next step
                 </h3>
               </div>
-              <span className="dashboard-pill" style={{ background:"rgba(59,130,246,0.10)", color:"#3b82f6" }}>
-                {roadmap?.progressPercent ?? 0}% Complete
+              <span className="dashboard-pill" style={{ background:"rgba(34,197,94,0.10)", color:"#22c55e" }}>
+                Ready
               </span>
             </div>
-            <div className="mb-6">
-              <div className="h-3 rounded-full overflow-hidden bg-[rgba(255,255,255,0.08)]">
-                <div className="h-full rounded-full" style={{ width:`${roadmap?.progressPercent ?? 10}%`, background:"linear-gradient(90deg,var(--pumpkin),#FFAD60)" }} />
+            <div className="space-y-3">
+              <div className="rounded-3xl p-4" style={{ background:"var(--bg-secondary)" }}>
+                <p className="text-[12px] uppercase tracking-[0.2em] mb-1" style={{ color:"var(--text-muted)" }}>Priority</p>
+                <p className="font-semibold" style={{ color:"var(--text-primary)" }}>
+                  {roadmap?.nextDeadline ? `Review ${roadmap.nextDeadline.title || "your next deadline"}` : "Set your first application deadline"}
+                </p>
               </div>
-            </div>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between gap-3 rounded-3xl p-4" style={{ background:"var(--bg-secondary)" }}>
-                <div>
-                  <p className="text-[12px] text-[var(--text-muted)]">Active courses</p>
-                  <p className="font-semibold" style={{ color:"var(--text-primary)" }}>{enrolled.length}</p>
-                </div>
-                <span className="text-[14px] font-bold" style={{ color:"var(--pumpkin)" }}>
-                  {stats.courseCompletion ?? "—"}%
-                </span>
-              </div>
-              <div className="flex items-center justify-between gap-3 rounded-3xl p-4" style={{ background:"var(--bg-secondary)" }}>
-                <div>
-                  <p className="text-[12px] text-[var(--text-muted)]">Weekly target</p>
-                  <p className="font-semibold" style={{ color:"var(--text-primary)" }}>Study 5 hours</p>
-                </div>
-                <span className="text-[14px] font-bold" style={{ color:"#22c55e" }}>On track</span>
+              <div className="rounded-3xl p-4" style={{ background:"var(--bg-secondary)" }}>
+                <p className="text-[12px] uppercase tracking-[0.2em] mb-1" style={{ color:"var(--text-muted)" }}>Study plan</p>
+                <p className="font-semibold" style={{ color:"var(--text-primary)" }}>
+                  {recentAttempts.length > 0 ? "Use your recent test feedback to guide your next session." : "Start with one timed practice test to build momentum."}
+                </p>
               </div>
             </div>
           </div>
@@ -449,6 +440,26 @@ export default function Dashboard() {
                 ))}
               </div>
             )}
+          </div>
+
+          <div className="glass-card p-6 fade-up-5">
+            <p className="text-[11px] uppercase tracking-[0.24em] mb-2" style={{ color:"var(--text-muted)" }}>
+              Coming soon
+            </p>
+            <h3 className="font-display text-[18px] font-bold" style={{ color:"var(--text-primary)" }}>
+              More tools are on the way
+            </h3>
+            <div className="mt-4 space-y-2">
+              {[
+                { label: "Live mentor sessions", status: "Coming soon" },
+                { label: "Scholarship matching", status: "Coming soon" },
+              ].map((item) => (
+                <div key={item.label} className="flex items-center justify-between rounded-2xl border px-3 py-3" style={{ borderColor:"var(--border)", background:"var(--bg-secondary)" }}>
+                  <span className="text-[13px]" style={{ color:"var(--text-secondary)" }}>{item.label}</span>
+                  <span className="dashboard-pill" style={{ background:"rgba(254,127,45,0.10)", color:"var(--pumpkin)" }}>{item.status}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
